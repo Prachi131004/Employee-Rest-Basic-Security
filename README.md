@@ -4,7 +4,7 @@ A secure, enterprise-grade **Employee Management Web Application** built using *
 
 ---
 
-## Live Live Demo
+## Live Demo
 
 Access the deployed application here:
 
