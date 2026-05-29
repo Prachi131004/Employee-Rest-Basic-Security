@@ -31,26 +31,22 @@ public class EmployeeService {
 		return employeeRepo.save(employee);
 	}
 
-	// ADMIN Action: Add Employee
 	public Employee addEmployee(Employee emp) {
 		if (employeeRepo.findByEmail(emp.getEmail()).isPresent()) {
 			throw new RuntimeException("Employee already exists!");
 		}
-		emp.setPassword(encoder.encode(emp.getPassword())); // Secure password
+		emp.setPassword(encoder.encode(emp.getPassword())); 
 		return employeeRepo.save(emp);
 	}
 
-	// USER Action: Read All
 	public List<Employee> getAll() {
 		return employeeRepo.findAll();
 	}
 
-	// USER Action: Read One
 	public Employee getOne(Long id) {
 		return employeeRepo.findById(id).orElseThrow(() -> new RuntimeException("Employee not found"));
 	}
 
-	// USER Action: Update Employee
 	@Transactional
 	public Employee updateEmployee(Long id, Employee updatedEmp) {
 		return employeeRepo.findById(id).map(existingEmp -> {
@@ -59,8 +55,6 @@ public class EmployeeService {
 			existingEmp.setDepartmentName(updatedEmp.getDepartmentName());
 			existingEmp.setRole(updatedEmp.getRole());
 
-			// Password check: Agar naya password bheja hai toh hi encode karo, nahi toh
-			// purana rehne do
 			if (updatedEmp.getPassword() != null && !updatedEmp.getPassword().trim().isEmpty()) {
 				existingEmp.setPassword(encoder.encode(updatedEmp.getPassword()));
 			}
@@ -69,7 +63,6 @@ public class EmployeeService {
 		}).orElseThrow(() -> new RuntimeException("Employee Not Found with id: " + id));
 	}
 
-	// ADMIN Action: Delete
 	public void deleteEmployee(Long id) {
 		employeeRepo.deleteById(id);
 	}

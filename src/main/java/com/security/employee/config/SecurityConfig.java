@@ -24,22 +24,22 @@ public class SecurityConfig {
 	            
 	            // Configure Form Login for UI
 	            .formLogin(form -> form
-	                    .loginPage("/login")               // Points to our custom controller method
-	                    .defaultSuccessUrl("/employees", true) // Redirect to dashboard upon successful login
+	                    .loginPage("/login")                     
+	                    .defaultSuccessUrl("/employees", true)   
 	                    .permitAll())
 	            
-	            // Configure Logout Behavior (👑 UPDATED WITH ROOT CLEANUP)
+	            // Configure Logout Behavior 
 	            .logout(logout -> logout
 	                    .logoutUrl("/logout")
 	                    .logoutSuccessUrl("/login?logout=true")
-	                    .invalidateHttpSession(true)  // Logout hote hi session poori tarah khatam karein
-	                    .clearAuthentication(true)     // Authentication tokens saaf karein
-	                    .deleteCookies("JSESSIONID")   // Browser ki session cookie delete karein
+	                    .invalidateHttpSession(true)  
+	                    .clearAuthentication(true)     
+	                    .deleteCookies("JSESSIONID")   
 	                    .permitAll())
 	            
-	            // 👑 THE MASTER FIX: Har page ke liye browser cache permanently block karne ke liye
+	     
 	            .headers(headers -> headers
-	                    .cacheControl(Customizer.withDefaults()) // Yeh auto-inject karega No-Cache headers ko
+	                    .cacheControl(Customizer.withDefaults()) 
 	            )
 	            .build();
 	}

@@ -14,10 +14,10 @@ public class Employee {
 	private Long id;
 	private String name;
 	@Column(nullable=false, unique=true)
-	private String email;                 // This will act as our "username" for logging in
+	private String email;                
 	private double salary;
 	private String password;
-	private String role;              //"ROLE_USER" or "ROLE_ADMIN"
+	private String role;              
 	private String departmentName;
 	
 	public Employee() {
