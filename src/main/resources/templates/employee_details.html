@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>My Profile Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script type="text/javascript">
+        function preventBack() { window.history.forward(); }
+        setTimeout("preventBack()", 0);
+        window.onunload = function () { null };
+    </script>
+</head>
+<body class="bg-gray-100 p-6 font-sans">
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-md">
+        
+        <div class="flex justify-between items-center border-b pb-4 mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">Employee Workspace</h1>
+                <p class="text-sm text-gray-500">Welcome, <span class="font-semibold text-indigo-600" sec:authentication="name">User</span></p>
+            </div>
+            <form th:action="@{/logout}" method="POST">
+                <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm font-semibold transition">Logout</button>
+            </form>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <div class="border p-5 rounded-lg bg-gray-50 border-gray-200">
+                <h3 class="text-lg font-bold text-gray-800 border-b pb-2 mb-4">My Profile Details</h3>
+                
+                <div th:each="emp : ${employeesList}" 
+                     th:if="${emp.email == loggedInEmail}" 
+                     class="space-y-3 text-sm text-gray-700">
+                    
+                    <p><b>Your Reference ID:</b> <span class="font-mono text-gray-600" th:text="${emp?.id}"></span></p>
+                    <p><b>Registered Email:</b> <span th:text="${emp?.email}"></span></p>
+                    <p><b>Department Assignment:</b> <span th:text="${emp?.departmentName}"></span></p>
+                    <p><b>Compensation Status:</b> <span class="text-emerald-600 font-semibold" th:text="'$' + ${emp?.salary}"></span></p>
+                </div>
+            </div>
+            
+            <div class="border p-5 rounded-lg bg-gray-50 border-gray-200">
+                <h3 class="text-lg font-bold text-gray-800 border-b pb-2 mb-4">System Administrators</h3>
+                <p class="text-xs text-gray-400 mb-3">Reach out to these users for management or permission queries:</p>
+                <ul class="space-y-2 text-sm text-gray-700">
+                    <li th:each="emp : ${employeesList}" th:if="${emp?.role == 'ROLE_ADMIN'}" class="flex justify-between border-b pb-1">
+                        <span class="font-medium text-gray-900" th:text="${emp?.email}"></span>
+                        <span class="bg-gray-200 text-gray-600 text-[11px] px-2 py-0.5 rounded font-semibold" th:text="${emp?.departmentName}"></span>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+    </div>
+</body>
+</html>

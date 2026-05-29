@@ -1,0 +1,77 @@
+package com.security.employee.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.security.employee.entity.Employee;
+import com.security.employee.repository.EmployeeRepository;
+
+import jakarta.transaction.Transactional;
+
+@Service
+public class EmployeeService {
+
+	@Autowired
+	private EmployeeRepository employeeRepo;
+
+	@Autowired
+	private PasswordEncoder encoder;
+
+	public Employee registerUser(Employee employee) {
+		if (employeeRepo.findByEmail(employee.getEmail()).isPresent()) {
+			throw new RuntimeException("User already exist");
+		}
+
+		String hashPW = encoder.encode(employee.getPassword());
+		employee.setPassword(hashPW);
+
+		return employeeRepo.save(employee);
+	}
+
+	// ADMIN Action: Add Employee
+	public Employee addEmployee(Employee emp) {
+		if (employeeRepo.findByEmail(emp.getEmail()).isPresent()) {
+			throw new RuntimeException("Employee already exists!");
+		}
+		emp.setPassword(encoder.encode(emp.getPassword())); // Secure password
+		return employeeRepo.save(emp);
+	}
+
+	// USER Action: Read All
+	public List<Employee> getAll() {
+		return employeeRepo.findAll();
+	}
+
+	// USER Action: Read One
+	public Employee getOne(Long id) {
+		return employeeRepo.findById(id).orElseThrow(() -> new RuntimeException("Employee not found"));
+	}
+
+	// USER Action: Update Employee
+	@Transactional
+	public Employee updateEmployee(Long id, Employee updatedEmp) {
+		return employeeRepo.findById(id).map(existingEmp -> {
+			existingEmp.setEmail(updatedEmp.getEmail());
+			existingEmp.setSalary(updatedEmp.getSalary());
+			existingEmp.setDepartmentName(updatedEmp.getDepartmentName());
+			existingEmp.setRole(updatedEmp.getRole());
+
+			// Password check: Agar naya password bheja hai toh hi encode karo, nahi toh
+			// purana rehne do
+			if (updatedEmp.getPassword() != null && !updatedEmp.getPassword().trim().isEmpty()) {
+				existingEmp.setPassword(encoder.encode(updatedEmp.getPassword()));
+			}
+
+			return employeeRepo.save(existingEmp);
+		}).orElseThrow(() -> new RuntimeException("Employee Not Found with id: " + id));
+	}
+
+	// ADMIN Action: Delete
+	public void deleteEmployee(Long id) {
+		employeeRepo.deleteById(id);
+	}
+
+}
